@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Interview Simulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #6b7280;
+            margin: 0 2px;
+            opacity: 0;
+            animation: typing-animation 1.4s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing-animation {
+            0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+            30% { opacity: 1; transform: translateY(-5px); }
+        }
+        .recording {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .video-feedback {
+            position: relative;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .feedback-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .sentiment-positive { color: #10b981; }
+        .sentiment-neutral { color: #f59e0b; }
+        .sentiment-negative { color: #ef4444; }
+        .eye-contact-high { color: #10b981; }
+        .eye-contact-medium { color: #f59e0b; }
+        .eye-contact-low { color: #ef4444; }
+        .confidence-high { color: #10b981; }
+        .confidence-medium { color: #f59e0b; }
+        .confidence-low { color: #ef4444; }
+        .resume-builder-section {
+            margin-top: 2rem;
+        }
+        #resume-output {
+            border: 1px solid #d1d5db;
+        }
+        #resume-content {
+            background-color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.375rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="app-container flex flex-col min-h-screen">
+        <header class="header bg-white shadow-sm py-4 px-6 flex justify-between items-center">
+            <div class="header-left flex items-center space-x-4">
+                <div class="logo bg-blue-600 text-white p-3 rounded-full">
+                    <i class="fas fa-user-tie text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">AI Job Interview Simulator</h1>
+            </div>
+            <div class="header-right flex items-center space-x-4">
+                <span id="username-display" class="text-gray-600"></span>
+                <button id="logout-btn" class="text-red-600 hover:text-red-800 flex items-center">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <div class="main-content flex-grow flex flex-col md:flex-row p-4 gap-4">
+            <!-- Video Analysis Section -->
+            <div class="w-full md:w-1/3 lg:w-1/4 space-y-4">
+                <div class="bg-white rounded-lg shadow p-4 h-full">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-800">Interview Analysis</h2>
+
+                    <div class="video-feedback bg-gray-200">
+                        <video id="webcam" width="100%" autoplay muted playsinline></video>
+                        <div class="feedback-overlay hidden" id="feedback-overlay">
+                            <div class="flex justify-between items-center">
+                                <span id="sentiment-text" class="sentiment-neutral">Neutral</span>
+                                <span id="sentiment-icon"><i class="bi bi-emoji-neutral"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-600">Eye Contact:</span>
+                            <span class="text-sm eye-contact-medium" id="eye-contact">--</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-600">Facial Expression:</span>
+                            <span class="text-sm" id="facial-expression">--</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-600">Speech Clarity:</span>
+                            <span class="text-sm" id="speech-clarity">--</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-600">Confidence Level:</span>
+                            <span class="text-sm confidence-medium" id="confidence-level">--</span>
+                        </div>
+                    </div>
+
+                    <button id="toggle-webcam" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition flex items-center justify-center">
+                        <i class="bi bi-camera-video mr-2"></i> <span>Enable Webcam Analysis</span>
+                    </button>
+
+                    <div class="mt-4 p-3 bg-yellow-50 rounded-lg hidden" id="analysis-tips">
+                        <h3 class="font-medium text-yellow-800 mb-2">Tips to Improve:</h3>
+                        <ul class="text-sm text-yellow-700 list-disc pl-5 space-y-1" id="tips-list">
+                            <!-- Tips will be added here dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="w-full md:w-2/3 lg:w-3/4 flex flex-col">
+                <div id="intro" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+                    <p id="intro-text" class="text-blue-800">Welcome to the AI Job Interview Simulator! Upload your resume (PDF or text) to start a mock interview with real-time video analysis.</p>
+                </div>
+
+                <div id="chat-box" class="bg-white rounded-lg shadow flex-grow overflow-y-auto p-4 mb-4 space-y-4">
+                    <div class="message bot bg-gray-50 rounded-lg p-3">
+                        <div class="message-header flex items-center text-gray-600 font-medium mb-1">
+                            <i class="fas fa-robot mr-2"></i> Assistant
+                        </div>
+                        <div class="message-content text-gray-800" id="initial-message">
+                            Please upload your resume (PDF or text) to begin the interview simulation! I'll analyze your responses and provide feedback on both content and delivery.
+                        </div>
+                    </div>
+                    <div class="typing-indicator hidden p-3 flex justify-center items-center">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="controls-wrapper bg-white rounded-lg shadow p-4">
+                    <div id="controls" class="space-y-3">
+                        <input type="text"
+                               id="user-input"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Type your answer here..."
+                               aria-label="Message input"
+                               autocomplete="off">
+                        <div class="button-group flex space-x-2">
+                            <button id="send-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition flex items-center justify-center">
+                                Send <i class="fas fa-paper-plane ml-2"></i>
+                            </button>
+                            <button id="voice-btn" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition flex items-center justify-center">
+                                <i class="fas fa-microphone mr-2"></i> Speak
+                            </button>
+                            <button id="upload-btn" class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition flex items-center justify-center">
+                                <i class="fas fa-upload mr-2"></i> Upload
+                            </button>
+                        </div>
+                        <input type="file" id="file-input" accept=".pdf,.txt" class="hidden">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resume Builder Section -->
+            <div class="resume-builder-section bg-white rounded-lg shadow p-4 mt-4">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800">Resume Builder</h2>
+                <textarea id="resume-input" class="w-full h-40 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4" placeholder="Enter your details for the resume..."></textarea>
+                <button id="build-resume-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition">Build Resume</button>
+                <div id="resume-output" class="mt-4 p-3 bg-gray-50 rounded-lg hidden">
+                    <h3 class="font-medium text-gray-800 mb-2">Generated Resume:</h3>
+                    <pre id="resume-content" class="text-sm text-gray-700 whitespace-pre-wrap"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Check authentication status
+            function checkAuth() {
+                $.ajax({
+                    url: '/check-auth',
+                    method: 'GET',
+                    success: function(response) {
+                        if (!response.authenticated) {
+                            window.location.href = '/login';
+                        } else {
+                            $('#username-display').text(`Welcome, ${response.username}`);
+                        }
+                    },
+                    error: function() {
+                        window.location.href = '/login';
+                    }
+                });
+            }
+
+            // Initial auth check
+            checkAuth();
+
+            // Logout functionality
+            $('#logout-btn').click(function() {
+                $.ajax({
+                    url: '/logout',
+                    method: 'POST',
+                    success: function() {
+                        window.location.href = '/login';
+                    },
+                    error: function() {
+                        window.location.href = '/login';
+                    }
+                });
+            });
+
+            // Webcam and analysis variables
+            let webcamInterval;
+            let isWebcamActive = false;
+            const videoElement = document.getElementById('webcam');
+            const feedbackOverlay = document.getElementById('feedback-overlay');
+
+            // Initialize webcam
+            async function setupWebcam() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    videoElement.srcObject = stream;
+                    isWebcamActive = true;
+                    $('#toggle-webcam').html('<i class="bi bi-camera-video-off mr-2"></i> Disable Webcam');
+                    feedbackOverlay.classList.remove('hidden');
+                    return true;
+                } catch (err) {
+                    console.error("Error accessing webcam:", err);
+                    addMessage("Could not access webcam. Please check permissions and try again.", "bot");
+                    return false;
+                }
+            }
+
+            // Update metrics display
+            function updateMetrics(metrics) {
+                if (!metrics) return;
+
+                // Update sentiment display
+                $('#sentiment-text').text(metrics.sentiment.charAt(0).toUpperCase() + metrics.sentiment.slice(1))
+                    .removeClass('sentiment-positive sentiment-neutral sentiment-negative')
+                    .addClass(`sentiment-${metrics.sentiment}`);
+
+                const sentimentIcons = {
+                    positive: '<i class="bi bi-emoji-smile"></i>',
+                    neutral: '<i class="bi bi-emoji-neutral"></i>',
+                    negative: '<i class="bi bi-emoji-frown"></i>'
+                };
+                $('#sentiment-icon').html(sentimentIcons[metrics.sentiment] || '<i class="bi bi-emoji-neutral"></i>');
+
+                // Update eye contact with color coding
+                const eyeContact = metrics.eye_contact || 0;
+                let eyeContactClass = 'eye-contact-medium';
+                if (eyeContact > 70) eyeContactClass = 'eye-contact-high';
+                else if (eyeContact < 40) eyeContactClass = 'eye-contact-low';
+
+                $('#eye-contact').text(`${eyeContact}%`)
+                    .removeClass('eye-contact-high eye-contact-medium eye-contact-low')
+                    .addClass(eyeContactClass);
+
+                // Update other metrics
+                $('#facial-expression').text(metrics.facial_expression.charAt(0).toUpperCase() + metrics.facial_expression.slice(1));
+                $('#speech-clarity').text(metrics.speech_clarity.charAt(0).toUpperCase() + metrics.speech_clarity.slice(1));
+
+                // Update confidence with color coding
+                const confidence = metrics.confidence_level || 'moderate';
+                let confidenceClass = 'confidence-medium';
+                if (confidence === 'high') confidenceClass = 'confidence-high';
+                else if (confidence === 'low') confidenceClass = 'confidence-low';
+
+                $('#confidence-level').text(confidence.charAt(0).toUpperCase() + confidence.slice(1))
+                    .removeClass('confidence-high confidence-medium confidence-low')
+                    .addClass(confidenceClass);
+            }
+
+            // Show tips
+            function showTips(tips) {
+                if (!tips || tips.length === 0) {
+                    $('#analysis-tips').addClass('hidden');
+                    return;
+                }
+
+                const tipsList = $('#tips-list');
+                tipsList.empty();
+                tips.forEach(tip => {
+                    tipsList.append(`<li>${tip}</li>`);
+                });
+                $('#analysis-tips').removeClass('hidden');
+
+                // Hide tips after 15 seconds
+                setTimeout(() => {
+                    $('#analysis-tips').addClass('hidden');
+                }, 15000);
+            }
+
+            // Toggle webcam on/off
+            $('#toggle-webcam').click(async function() {
+                if (isWebcamActive) {
+                    // Turn off webcam
+                    const stream = videoElement.srcObject;
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+                    videoElement.srcObject = null;
+                    isWebcamActive = false;
+                    clearInterval(webcamInterval);
+                    $(this).html('<i class="bi bi-camera-video mr-2"></i> Enable Webcam');
+                    feedbackOverlay.classList.add('hidden');
+                    $('#analysis-tips').addClass('hidden');
+                } else {
+                    // Turn on webcam
+                    const success = await setupWebcam();
+                    if (!success) {
+                        $(this).html('<i class="bi bi-camera-video mr-2"></i> Enable Webcam');
+                    }
+                }
+            });
+
+            // Typing indicator functions
+            function showTypingIndicator() {
+                $(".typing-indicator").removeClass("hidden").addClass("flex");
+            }
+
+            function hideTypingIndicator() {
+                $(".typing-indicator").addClass("hidden").removeClass("flex");
+            }
+
+            // Add message to chat
+            function addMessage(text, sender) {
+                hideTypingIndicator();
+                const messageDiv = $(`<div class="message ${sender === "user" ? "user bg-blue-50" : "bot bg-gray-50"} rounded-lg p-3"></div>`);
+                const headerDiv = $('<div class="message-header flex items-center text-gray-600 font-medium mb-1"></div>');
+                const contentDiv = $('<div class="message-content text-gray-800"></div>');
+
+                headerDiv.html(sender === "user" ?
+                    '<i class="fas fa-user mr-2"></i> You' :
+                    '<i class="fas fa-robot mr-2"></i> Assistant');
+
+                // Format message text with basic markdown support
+                const formattedText = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>') // italic
+                    .replace(/`(.*?)`/g, '<code class="bg-gray-200 px-1 rounded">$1</code>') // code
+                    .replace(/# (.*)/g, '<h3 class="font-bold text-lg mt-2 mb-1">$1</h3>') // heading
+                    .replace(/- (.*)/g, '<li>$1</li>') // list items
+                    .replace(/<li>.*/g, function(match) { return '<ul class="list-disc pl-5 space-y-1 my-1">' + match + '</ul>'; })
+                    .replace(/\n/g, '<br>'); // line breaks
+
+                contentDiv.html(formattedText);
+                messageDiv.append(headerDiv, contentDiv);
+                $("#chat-box").append(messageDiv);
+                $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+            }
+
+            // Reset chat
+            function resetChat() {
+                $("#chat-box").empty();
+                addMessage("Please upload your resume (PDF or text) to begin the interview simulation! I'll analyze your responses and provide feedback on both content and delivery.", "bot");
+            }
+
+            // Send message to server
+            function sendMessage(message) {
+                showTypingIndicator();
+
+                if (message.toLowerCase().trim() === "restart") {
+                    setTimeout(function() {
+                        hideTypingIndicator();
+                        resetChat();
+                        addMessage("Interview has been restarted. Please upload a new resume!", "bot");
+                        speak("Interview has been restarted. Please upload a new resume!");
+                    }, 1000);
+                    return;
+                }
+
+                // Add user message immediately
+                addMessage(message, "user");
+                $("#user-input").val("");
+
+                // Send to server
+                $.ajax({
+                    url: "/chat",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ message: message }),
+                    success: function(response) {
+                        addMessage(response.response, "bot");
+                        updateMetrics(response.metrics);
+                        showTips(response.tips);
+                        speak(response.response);
+                    },
+                    error: function(xhr, status, error) {
+                        hideTypingIndicator();
+                        if (xhr.status === 401) {
+                            window.location.href = '/login';
+                        } else {
+                            addMessage("There was an issue connecting to the server.", "bot");
+                        }
+                    }
+                });
+            }
+
+            // Text-to-speech function
+            function speak(text) {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = "en-US";
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+
+            // Resume Builder functionality
+            $("#build-resume-btn").click(function() {
+                const userInput = $("#resume-input").val().trim();
+                if (userInput === "") return;
+
+                showTypingIndicator();
+
+                // Send to server
+                $.ajax({
+                    url: "/build_resume",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ input: userInput }),
+                    success: function(response) {
+                        hideTypingIndicator();
+                        $("#resume-output").removeClass("hidden");
+                        $("#resume-content").text(response.response);
+                        speak(response.response);
+                    },
+                    error: function(xhr, status, error) {
+                        hideTypingIndicator();
+                        if (xhr.status === 401) {
+                            window.location.href = '/login';
+                        } else {
+                            addMessage("There was an issue generating the resume.", "bot");
+                        }
+                    }
+                });
+            });
+
+            // Event listeners
+            $("#send-btn").click(function() {
+                const userMessage = $("#user-input").val().trim();
+                if (userMessage === "") return;
+                sendMessage(userMessage);
+            });
+
+            $("#user-input").keypress(function(e) {
+                if (e.which === 13) {
+                    $("#send-btn").click();
+                }
+            });
+
+            $("#upload-btn").click(function() {
+                $("#file-input").click();
+            });
+
+            $("#file-input").change(function() {
+                const file = this.files[0];
+                if (!file) return;
+
+                showTypingIndicator();
+                const formData = new FormData();
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/upload",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        addMessage(`Resume uploaded: ${file.name}`, "user");
+                        addMessage(response.response, "bot");
+                        updateMetrics(response.metrics);
+                        showTips(response.tips);
+                        speak(response.response);
+                    },
+                    error: function(xhr, status, error) {
+                        hideTypingIndicator();
+                        if (xhr.status === 401) {
+                            window.location.href = '/login';
+                        } else {
+                            addMessage("There was an issue uploading the resume.", "bot");
+                        }
+                    }
+                });
+                $(this).val("");
+            });
+
+            // Voice recognition setup
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    $("#user-input").val(transcript);
+                    $("#send-btn").click();
+                    $("#voice-btn").removeClass("recording bg-red-600").addClass("bg-green-600");
+                };
+
+                recognition.onerror = function(event) {
+                    console.error("Speech recognition error:", event.error);
+                    $("#voice-btn").removeClass("recording bg-red-600").addClass("bg-green-600");
+                    addMessage("Sorry, I didn't catch that. Could you please try again?", "bot");
+                };
+
+                recognition.onend = function() {
+                    $("#voice-btn").removeClass("recording bg-red-600").addClass("bg-green-600");
+                };
+
+                $("#voice-btn").click(function() {
+                    if ($(this).hasClass("recording")) {
+                        recognition.stop();
+                    } else {
+                        recognition.lang = "en-US";
+                        recognition.start();
+                        $(this).removeClass("bg-green-600").addClass("recording bg-red-600");
+
+                        // Auto-stop after 10 seconds
+                        setTimeout(function() {
+                            if ($("#voice-btn").hasClass("recording")) {
+                                recognition.stop();
+                            }
+                        }, 10000);
+                    }
+                });
+            } else {
+                $("#voice-btn").prop("disabled", true).addClass("opacity-50 cursor-not-allowed");
+                console.log("Speech recognition not supported in this browser");
+            }
+
+            // Initial setup
+            resetChat();
+        });
+    </script>
+</body>
+</html>

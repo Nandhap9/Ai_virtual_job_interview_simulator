@@ -1,0 +1,29 @@
+{
+    "bas": {
+        "password": "scrypt:32768:8:1$hBQ7c7yWQps5i0SV$3846aa5688d9f3b54e3d5435e89879c33414861732109fdc5a798b355c14f2e1fbe8b6067e082905718de214e8809a040abf8b5d5ed9592d9e65466a959562d2"
+    },
+    "user": {
+        "password": "scrypt:32768:8:1$Lu1J7P5Y9m0LgjzC$0545dc0e781943d05e4b3995fac6836ab506d22e837a854e4ec6f1a9f31d745ddd4bf6ee83748bc87bc08b27c73b8ddca426fcc9b11a974955d0aa1f7fc17aaf"
+    },
+    "user1": {
+        "password": "scrypt:32768:8:1$hcFAavtGi3PuekiO$82143e1d4511d7ab7c8cf877bc3c541c9661e87191dde9b73f33f0f1cb40f7279a121c9d01db078baf8628dc1a130a6b87b762b93869e14eac11e62d85be07ef"
+    },
+    "agathi11": {
+        "password": "scrypt:32768:8:1$qQTylaA0NrZt2nwu$44a6369266026858cec25db374c4fef6433e6661ade1d99c0168d8ec58ac0fb4271503641833dc5d9ff72fd8a7b9806f944247b2724ad636d0cdb8bdfd8c174f"
+    },
+    "agathi1": {
+        "password": "scrypt:32768:8:1$Wms4e9VV69hY4sGD$4bc1c052bfb9fa9726318f6381fcf8b577af132b1126e99644b255994cb697d53689027cfd45ba215fbba8f600901f6cdcc5e223cb58f02c24e9c2da574fe84e"
+    },
+    "agathi02": {
+        "password": "scrypt:32768:8:1$0FmeJkTyQ9y42egI$10aea45bc12e133ffb1c7a364f65f6c2902800d023152dc71653eafd6d7a54ea62d193096805c05f980983842e30e23fe09d1b9f898ff69a1e3c12fc7f516aa4"
+    },
+    "admin": {
+        "password": "scrypt:32768:8:1$3VXZIJJxj26gJmTt$04512ebb7959f5bfe23db2092d0bbf2cb0b9b8f23c89dc4423528868a3f2d0da21f3faafb561748c219afc9ce6ae571daee66af36257a5aa39a371566db77fd3"
+    },
+    "admin1": {
+        "password": "scrypt:32768:8:1$BwHXBOR1Qspl6bLK$910e07742d100ec2b454dba8ee6ac14c8339965f06a980e24932097440befc4a35353abef6aabe384f1e5844bddff34c877dfc078e73caeaf0baf41b1139ea23"
+    },
+    "nandha9": {
+        "password": "scrypt:32768:8:1$0SsQAlTY8aZX0WWC$d50e1506afd85adf4d4140813ee5829c453f53ef1cd45312cd54daad9d9c9e94822d49c7319f1f4685fb14b6cfcbbaf246b6a92097eeea9150d24ccb7df647c8"
+    }
+}

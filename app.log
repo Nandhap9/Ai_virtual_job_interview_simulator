@@ -1,0 +1,47 @@
+2025-05-02 18:15:11,806 WARNING:  * Debugger is active!
+2025-05-02 18:15:11,808 INFO:  * Debugger PIN: 593-005-208
+2025-05-02 18:15:13,150 INFO: 127.0.0.1 - - [02/May/2025 18:15:13] "GET /interview HTTP/1.1" 200 -
+2025-05-02 18:15:13,194 INFO: 127.0.0.1 - - [02/May/2025 18:15:13] "GET /check-auth HTTP/1.1" 200 -
+2025-05-02 18:15:35,895 DEBUG: Received resume input: {'name': 'bashith', 'email': 'bashith67@gmail.com', 'education': 'AI', 'experience': 'AI developer', 'skills': 'python AI ML'}
+2025-05-02 18:15:35,895 INFO: Calling Gemini API for LaTeX resume
+2025-05-02 18:15:38,433 DEBUG: Generated LaTeX content: \begin{center}
+\textbf{bashith} \\
+bashith67@gmail.com
+\end{center}
+
+\section{Education}
+\textbf{AI}
+
+\section{Work Experience}
+\textbf{AI developer}
+
+\section{Skills}
+\textbf{Python}, \textbf{AI}, \textbf{ML}
+2025-05-02 18:15:38,437 INFO: Created temporary .tex file: C:\Users\user\AppData\Local\Temp\tmpxtkbqesj.tex
+2025-05-02 18:15:38,438 INFO: Compiling LaTeX to PDF: C:\Users\user\AppData\Local\Temp\tmpxtkbqesj.pdf
+2025-05-02 18:15:38,441 ERROR: Error during file handling or compilation: [WinError 2] The system cannot find the file specified
+2025-05-02 18:15:38,442 INFO: Cleaned up temporary .tex file: C:\Users\user\AppData\Local\Temp\tmpxtkbqesj.tex
+2025-05-02 18:15:38,442 INFO: 127.0.0.1 - - [02/May/2025 18:15:38] "[35m[1mPOST /build-resume HTTP/1.1[0m" 500 -
+2025-05-02 18:17:58,623 DEBUG: Received resume input: {'name': 'bashith', 'email': 'bashith67@gmail.com', 'education': 'B.S. Computer Science, XYZ University, 2020', 'experience': 'Software Engineer, ABC Corp, 2021-Present, Developed web applications using Python and JavaScript.', 'skills': 'Python, JavaScript, SQL, Project Management'}
+2025-05-02 18:17:58,624 INFO: Calling Gemini API for LaTeX resume
+2025-05-02 18:17:59,785 DEBUG: Generated LaTeX content: \section{Contact Information}
+\textbf{bashith} \\
+bashith67@gmail.com
+
+\section{Education}
+B.S. Computer Science, XYZ University, 2020
+
+\section{Work Experience}
+\textbf{Software Engineer}, ABC Corp, 2021--Present \\
+Developed web applications using Python and JavaScript.
+
+\section{Skills}
+Python, JavaScript, SQL, Project Management
+2025-05-02 18:17:59,787 INFO: Created temporary .tex file: C:\Users\user\AppData\Local\Temp\tmp0_6v9v4_.tex
+2025-05-02 18:17:59,787 INFO: Compiling LaTeX to PDF: C:\Users\user\AppData\Local\Temp\tmp0_6v9v4_.pdf
+2025-05-02 18:17:59,790 ERROR: Error during file handling or compilation: [WinError 2] The system cannot find the file specified
+2025-05-02 18:17:59,791 INFO: Cleaned up temporary .tex file: C:\Users\user\AppData\Local\Temp\tmp0_6v9v4_.tex
+2025-05-02 18:17:59,791 INFO: 127.0.0.1 - - [02/May/2025 18:17:59] "[35m[1mPOST /build-resume HTTP/1.1[0m" 500 -
+2025-05-02 18:25:13,956 INFO:  * Detected change in 'C:\\Users\\user\\Desktop\\AI_JOB_INTERVIEW_ASSISTANCE\\AI_JOB_INTERVIEW_ASSISTANCE\\AI_JOB_INTERVIEW_ASSISTANCE\\app.py', reloading
+2025-05-02 18:25:13,957 INFO:  * Detected change in 'C:\\Users\\user\\Desktop\\AI_JOB_INTERVIEW_ASSISTANCE\\AI_JOB_INTERVIEW_ASSISTANCE\\AI_JOB_INTERVIEW_ASSISTANCE\\app.py', reloading
+2025-05-02 18:25:13,958 INFO:  * Detected change in 'C:\\Users\\user\\Desktop\\AI_JOB_INTERVIEW_ASSISTANCE\\AI_JOB_INTERVIEW_ASSISTANCE\\AI_JOB_INTERVIEW_ASSISTANCE\\app.py', reloading
